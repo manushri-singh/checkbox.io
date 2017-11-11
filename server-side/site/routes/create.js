@@ -2,8 +2,9 @@ var mongo = require('mongodb');
 var crypto = require('crypto');
 var emailjs = require('emailjs/email');
 var models = require('./studyModel.js');
+var redis = require('redis');
+var client = redis.createClient(6379, '192.168.33.110', {})
 
- 
 var Server = mongo.Server,
     Db = mongo.Db,
     BSON = mongo.BSONPure;
@@ -25,6 +26,16 @@ var emailServer  = emailjs.server.connect({
 });
 
 exports.createStudy = function(req, res) {
+
+try{
+        client.get('canCreate', function(err, reply) {
+        // reply is null when the key is missing
+        if(reply == 'false')
+        {
+          res.send('[REDIS] Operation Not Permitted')        
+        }
+        else
+        {
 
     var invitecode = req.body.invitecode; 
     var studyKind = req.body.studyKind;
@@ -66,6 +77,17 @@ exports.createStudy = function(req, res) {
 
         });
     });
+}
+        console.log("Value of createStudy: " + reply);
+      });
+    }
+    catch(e)
+    {
+      res.send('Error Encountered!')
+    }
+
+
+
 };
 
 
