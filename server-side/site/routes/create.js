@@ -3,7 +3,7 @@ var crypto = require('crypto');
 var emailjs = require('emailjs/email');
 var models = require('./studyModel.js');
 var redis = require('redis');
-var client = redis.createClient(6379, '192.168.33.110', {})
+var client = redis.createClient(6379, '127.0.0.1', {})
 
 var Server = mongo.Server,
     Db = mongo.Db,
@@ -29,14 +29,12 @@ exports.createStudy = function(req, res) {
 
 try{
         client.get('canCreate', function(err, reply) {
-        // reply is null when the key is missing
         if(reply == 'false')
         {
           res.send('[REDIS] Operation Not Permitted')        
         }
         else
         {
-
     var invitecode = req.body.invitecode; 
     var studyKind = req.body.studyKind;
 
@@ -85,9 +83,6 @@ try{
     {
       res.send('Error Encountered!')
     }
-
-
-
 };
 
 
